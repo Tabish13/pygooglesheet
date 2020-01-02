@@ -68,6 +68,7 @@ def HtmlParse(request):
 
 	#updated_results = write_gsheet.insertRowSheet([["12345"]])
 
+	#forked content
 	
 	response = JsonResponse({"body":{"data":read_gsheet.getAllRows()},"message":"Success"})
 	response.status_code = 200
