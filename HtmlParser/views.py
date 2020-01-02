@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.http import JsonResponse
+
 from django.http import FileResponse
+
 
 from google.oauth2 import service_account
 
@@ -16,6 +18,7 @@ from google.auth.transport.requests import Request
 
 
 def index(request):
+
 
     return HttpResponse("Hello world!")
 
@@ -40,7 +43,6 @@ def IncorGsheetParser(request):
 
 
 
-
 def HtmlParse(request):
 	#if request.method == 'POST':
 
@@ -61,7 +63,11 @@ def HtmlParse(request):
 	read_gsheet =  GoogleSheets('14IJw5pOtvRgf-pscySHKdU-1_0TEqlYxDfJ-KUyq-WQ','km')
 	
 	write_gsheet =  GoogleSheets('14IJw5pOtvRgf-pscySHKdU-1_0TEqlYxDfJ-KUyq-WQ','km')
+
 	#updated_results = write_gsheet.insertRowSheet([["Kaustubh Shinde","Shinde"],["Tabish","Khan"]])
+
+	#updated_results = write_gsheet.insertRowSheet([["12345"]])
+
 	
 	response = JsonResponse({"body":{"data":read_gsheet.getAllRows()},"message":"Success"})
 	response.status_code = 200
@@ -71,7 +77,10 @@ def HtmlParse(request):
 
 class GoogleSheets:
 	
-	def __init__(self, sheet_id, sheet_range_name, value_input_option = "FORMATTED_VALUE"):
+
+
+	def __init__(self, sheet_id, sheet_range_name, value_input_option = "USER_ENTERED"):
+
 		self.sheet_id = sheet_id
 		self.sheet_range_name = sheet_range_name	
 		self.value_input_option = value_input_option
