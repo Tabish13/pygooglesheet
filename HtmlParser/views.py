@@ -23,6 +23,22 @@ def index(request):
     return HttpResponse("Hello world!")
 
 
+def GodrejPropertiesGsheetParser(request):
+	read_sheet = GoogleSheets('1DUsETxcaEmlMkev38o0SLDFy996RjwWBmR4PBAEtmQE','GodrejSheet', "UNFORMATTED_VALUE")
+	all_rows = read_sheet.getAllRows()
+	first_row_title = all_rows[0]
+	final_data = {}
+	for row in all_rows[1:]:
+		#merge the row to first row as key value
+		#row[8] = json.loads(row[8])
+		#row[10] = json.loads(row[10])
+		final_data[row[0].lower()] = dict(zip(first_row_title,row))
+
+	return JsonResponse({"status":"200","data":final_data, "message":"success"})
+	file_response = FileResponse(json.dumps(final_data))
+	file_response['Content-Disposition'] = 'attachment; filename=GodrejData.json'
+	return file_response
+
 def IncorGsheetParser(request):
 
 	#ToDO get all the sheet values 
@@ -80,11 +96,12 @@ class GoogleSheets:
 	
 
 
-	def __init__(self, sheet_id, sheet_range_name, value_input_option = "USER_ENTERED"):
+	def __init__(self, sheet_id, sheet_range_name, value_input_option = "USER_ENTERED", value_read_option= "FORMATTED_VALUE"):
 
 		self.sheet_id = sheet_id
 		self.sheet_range_name = sheet_range_name	
 		self.value_input_option = value_input_option
+		self.value_read_option = value_read_option
 		self.google_service_auth()	
 
 	#Set google path in the setting page which should be in the projects folder
@@ -106,10 +123,11 @@ class GoogleSheets:
 		# Call the Sheets API
 		self.sheet = service.spreadsheets()		
 
-	def getAllRows(self, sheet_range_name= None ):
+	def getAllRows(self, sheet_range_name= None, value_read_option = None):
 		SPREADSHEET_ID = self.sheet_id
 		RANGE_NAME = sheet_range_name if sheet_range_name else self.sheet_range_name
-		result = self.sheet.values().get(spreadsheetId = SPREADSHEET_ID, range=RANGE_NAME).execute()
+		value_read_option = value_read_option if value_read_option else self.value_read_option
+		result = self.sheet.values().get(spreadsheetId = SPREADSHEET_ID, range=RANGE_NAME, valueRenderOption = value_read_option).execute()
 		#result = sheet.values().batchGet(spreadsheetId=SPREADSHEET_ID,ranges=RANGE_NAME).execute()		
 		return result["values"]
 
